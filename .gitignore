@@ -1,0 +1,3 @@
+# Root-level noise (Next.js ignores live in web/.gitignore)
+.DS_Store
+*.pem
