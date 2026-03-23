@@ -11,3 +11,10 @@ Deployments run from GitHub; you only need the Vercel dashboard.
 3. When you add a database, set **`DATABASE_URL`** under *Settings → Environment Variables* and redeploy.
 
 Repository: [github.com/dkaplev/Social_app](https://github.com/dkaplev/Social_app).
+
+## Database (Prisma + SQLite)
+
+- Schema: `prisma/schema.prisma`. Client singleton: `lib/db/prisma.ts`.
+- Migrations live in `prisma/migrations/` (apply on a new machine with `DATABASE_URL` set, e.g. from `.env.example`).
+- Seed (demo user + one friend): `npm run db:seed` (requires `DATABASE_URL` in `.env.local`).
+- Production: use Postgres (Neon / Supabase / Vercel Postgres), change `provider` + `url` in the datasource, and run `prisma migrate deploy` in your release pipeline; SQLite is not suitable for serverless runtime data.

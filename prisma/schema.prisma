@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  createdAt DateTime @default(now())
+  friends   Friend[]
+}
+
+model Friend {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  createdAt   DateTime          @default(now())
+  lastMetAt   DateTime?
+  cadenceDays Int
+  temperature FriendTemperature @default(COLD)
+  prefs       FriendPrefs?
+  invites     Invite[]
+  feedbacks   Feedback[]
+  pairModel   PairModel?
+}
+
+enum FriendTemperature {
+  WARM
+  COOLING
+  COLD
+}
+
+model FriendPrefs {
+  id               String @id @default(cuid())
+  friendId         String @unique
+  friend           Friend @relation(fields: [friendId], references: [id], onDelete: Cascade)
+  vibeQuietLively  Int    @default(50)
+  maxTravelMinutes Int    @default(30)
+  budgetBand       String @default("mid")
+  durationBand     String @default("90m")
+  categories       Json   @default("[]")
+}
+
+model Invite {
+  id            String       @id @default(cuid())
+  friendId      String
+  friend        Friend       @relation(fields: [friendId], references: [id], onDelete: Cascade)
+  token         String       @unique
+  status        InviteStatus @default(PENDING)
+  proposedSlots Json
+  chosenSlot    Json?
+  createdAt     DateTime     @default(now())
+  event         Event?
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Event {
+  id           String     @id @default(cuid())
+  inviteId     String     @unique
+  invite       Invite     @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  startsAt     DateTime
+  endsAt       DateTime
+  title        String
+  locationText String
+  status       String     @default("confirmed")
+  feedbacks    Feedback[]
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  friendId  String
+  friend    Friend   @relation(fields: [friendId], references: [id], onDelete: Cascade)
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  rating    Int
+  tags      Json     @default("[]")
+  createdAt DateTime @default(now())
+}
+
+model PairModel {
+  id        String   @id @default(cuid())
+  friendId  String   @unique
+  friend    Friend   @relation(fields: [friendId], references: [id], onDelete: Cascade)
+  weights   Json
+  updatedAt DateTime @updatedAt
+}
