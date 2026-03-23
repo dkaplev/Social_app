@@ -1,31 +1,13 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { cadenceLabel } from "@/lib/friends/cadence";
+import {
+  temperatureLabel,
+  temperatureStyles,
+} from "@/lib/friends/temperature-display";
 import { getDefaultUserId } from "@/lib/user/default-user";
 
 export const dynamic = "force-dynamic";
-
-function temperatureStyles(t: string) {
-  switch (t) {
-    case "WARM":
-      return "bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-200";
-    case "COOLING":
-      return "bg-amber-100 text-amber-950 dark:bg-amber-950/40 dark:text-amber-100";
-    default:
-      return "bg-zinc-200 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200";
-  }
-}
-
-function temperatureLabel(t: string) {
-  switch (t) {
-    case "WARM":
-      return "Warm";
-    case "COOLING":
-      return "Cooling";
-    default:
-      return "Cold";
-  }
-}
 
 export default async function FriendsPage() {
   const userId = await getDefaultUserId();
@@ -74,26 +56,28 @@ export default async function FriendsPage() {
       ) : (
         <ul className="flex flex-col gap-3">
           {friends.map((f) => (
-            <li
-              key={f.id}
-              className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-950/40 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div>
-                <p className="font-medium text-foreground">{f.name}</p>
-                <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-500">
-                  {cadenceLabel(f.cadenceDays)} · {f.cadenceDays}d target
-                  {f.lastMetAt
-                    ? ` · last met ${f.lastMetAt.toLocaleDateString(undefined, {
-                        dateStyle: "medium",
-                      })}`
-                    : " · last met — not set"}
-                </p>
-              </div>
-              <span
-                className={`inline-flex w-fit rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${temperatureStyles(f.temperature)}`}
+            <li key={f.id}>
+              <Link
+                href={`/friends/${f.id}`}
+                className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-4 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50 sm:flex-row sm:items-center sm:justify-between"
               >
-                {temperatureLabel(f.temperature)}
-              </span>
+                <div>
+                  <p className="font-medium text-foreground">{f.name}</p>
+                  <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-500">
+                    {cadenceLabel(f.cadenceDays)} · {f.cadenceDays}d target
+                    {f.lastMetAt
+                      ? ` · last met ${f.lastMetAt.toLocaleDateString(undefined, {
+                          dateStyle: "medium",
+                        })}`
+                      : " · last met — not set"}
+                  </p>
+                </div>
+                <span
+                  className={`inline-flex w-fit rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${temperatureStyles(f.temperature)}`}
+                >
+                  {temperatureLabel(f.temperature)}
+                </span>
+              </Link>
             </li>
           ))}
         </ul>

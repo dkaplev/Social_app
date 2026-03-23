@@ -44,6 +44,7 @@ model FriendPrefs {
   budgetBand       String @default("mid")
   durationBand     String @default("90m")
   categories       Json   @default("[]")
+  avoidTags        Json   @default("[]")
 }
 
 model Invite {
