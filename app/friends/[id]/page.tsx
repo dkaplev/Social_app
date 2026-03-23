@@ -4,6 +4,7 @@ import { FriendPrefsForm } from "@/app/friends/[id]/friend-prefs-form";
 import { prisma } from "@/lib/db/prisma";
 import { cadenceLabel } from "@/lib/friends/cadence";
 import { parseStringArray } from "@/lib/friends/pref-options";
+import { computeFriendTemperature } from "@/lib/friends/temperature";
 import {
   temperatureLabel,
   temperatureStyles,
@@ -37,6 +38,8 @@ export default async function FriendDetailPage({ params }: PageProps) {
     avoidTags: parseStringArray(p?.avoidTags),
   };
 
+  const temperature = computeFriendTemperature(friend);
+
   const prefsFormKey = [
     initial.durationBand,
     initial.maxTravelMinutes,
@@ -56,7 +59,7 @@ export default async function FriendDetailPage({ params }: PageProps) {
           ← Friends
         </Link>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
+          <div className="min-w-0">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               {friend.name}
             </h1>
@@ -70,11 +73,19 @@ export default async function FriendDetailPage({ params }: PageProps) {
                 : " · last met not set"}
             </p>
           </div>
-          <span
-            className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-medium ${temperatureStyles(friend.temperature)}`}
-          >
-            {temperatureLabel(friend.temperature)}
-          </span>
+          <div className="flex shrink-0 flex-col items-stretch gap-2 sm:items-end">
+            <span
+              className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-medium ${temperatureStyles(temperature)}`}
+            >
+              {temperatureLabel(temperature)}
+            </span>
+            <Link
+              href={`/friends/${friend.id}/plan`}
+              className="inline-flex items-center justify-center rounded-lg bg-foreground px-3 py-1.5 text-xs font-medium text-background hover:opacity-90"
+            >
+              Plan this week
+            </Link>
+          </div>
         </div>
       </div>
 

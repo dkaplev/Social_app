@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { cadenceLabel } from "@/lib/friends/cadence";
+import { computeFriendTemperature } from "@/lib/friends/temperature";
 import {
   temperatureLabel,
   temperatureStyles,
@@ -24,7 +25,8 @@ export default async function FriendsPage() {
             Friends
           </h1>
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            Stored on your database — temperature rules land in Day 5.
+            Temperature updates from cadence and last met — see dashboard for
+            priority order.
           </p>
         </div>
         <Link
@@ -55,31 +57,34 @@ export default async function FriendsPage() {
         </div>
       ) : (
         <ul className="flex flex-col gap-3">
-          {friends.map((f) => (
-            <li key={f.id}>
-              <Link
-                href={`/friends/${f.id}`}
-                className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-4 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div>
-                  <p className="font-medium text-foreground">{f.name}</p>
-                  <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-500">
-                    {cadenceLabel(f.cadenceDays)} · {f.cadenceDays}d target
-                    {f.lastMetAt
-                      ? ` · last met ${f.lastMetAt.toLocaleDateString(undefined, {
-                          dateStyle: "medium",
-                        })}`
-                      : " · last met — not set"}
-                  </p>
-                </div>
-                <span
-                  className={`inline-flex w-fit rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${temperatureStyles(f.temperature)}`}
+          {friends.map((f) => {
+            const temperature = computeFriendTemperature(f);
+            return (
+              <li key={f.id}>
+                <Link
+                  href={`/friends/${f.id}`}
+                  className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-4 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50 sm:flex-row sm:items-center sm:justify-between"
                 >
-                  {temperatureLabel(f.temperature)}
-                </span>
-              </Link>
-            </li>
-          ))}
+                  <div>
+                    <p className="font-medium text-foreground">{f.name}</p>
+                    <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-500">
+                      {cadenceLabel(f.cadenceDays)} · {f.cadenceDays}d target
+                      {f.lastMetAt
+                        ? ` · last met ${f.lastMetAt.toLocaleDateString(undefined, {
+                            dateStyle: "medium",
+                          })}`
+                        : " · last met — not set"}
+                    </p>
+                  </div>
+                  <span
+                    className={`inline-flex w-fit rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${temperatureStyles(temperature)}`}
+                  >
+                    {temperatureLabel(temperature)}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
     </main>
