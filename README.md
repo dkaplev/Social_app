@@ -1,13 +1,13 @@
 # Warm (social app)
 
-Next.js app is at the **repository root** (so Vercel’s default root matches `package.json`). Product notes: `Social_App_Instructions`.
+Next.js lives at the **repository root** (`package.json` here). Notes: `Social_App_Instructions`.
 
-## Deploy on Vercel
+## Vercel (no local CLI required)
 
-1. Push this repository to GitHub.
-2. In [Vercel](https://vercel.com), **Add New Project** → import [dkaplev/Social_app](https://github.com/dkaplev/Social_app).
-3. Leave **Root Directory** empty (or `.`) — do **not** set it to `web` (that folder no longer exists).
-4. Framework should detect **Next.js**; defaults for install/build are fine.
-5. When you add a hosted database (Neon / Supabase / Vercel Postgres), set **`DATABASE_URL`** under Project → **Environment Variables**, then redeploy.
+Deployments run from GitHub; you only need the Vercel dashboard.
 
-Local dev: `npm install && npm run dev`.
+1. **Root Directory** is **not** under *Settings → General*. Use **[Settings → Build and Deployment](https://vercel.com/docs/deployments/configure-a-build)** (same area as Framework / Build Command). Leave **Root Directory** empty so it uses the repo root (where this `package.json` is).
+2. This repo includes **`vercel.json`**, which sets the framework to **Next.js** and pins install/build to `npm install` and `npm run build`, so detection does not depend on dashboard presets.
+3. When you add a database, set **`DATABASE_URL`** under *Settings → Environment Variables* and redeploy.
+
+Repository: [github.com/dkaplev/Social_app](https://github.com/dkaplev/Social_app).
