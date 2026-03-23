@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { NewFriendForm } from "./new-friend-form";
+
+export const dynamic = "force-dynamic";
 
 export default function NewFriendPage() {
   return (
@@ -14,15 +17,12 @@ export default function NewFriendPage() {
           Add friend
         </h1>
         <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          Form and persistence arrive in Day 3 (Prisma + SQLite). This page is
-          the route shell.
+          Name and cadence are saved; you can tune planning preferences on their
+          profile next.
         </p>
       </div>
       <div className="max-w-md rounded-xl border border-zinc-200 bg-zinc-50/50 p-6 dark:border-zinc-800 dark:bg-zinc-900/30">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Placeholder: name, cadence (weekly / biweekly / monthly), optional
-          last met date.
-        </p>
+        <NewFriendForm />
       </div>
     </main>
   );

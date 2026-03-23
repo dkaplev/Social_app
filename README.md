@@ -18,3 +18,7 @@ Repository: [github.com/dkaplev/Social_app](https://github.com/dkaplev/Social_ap
 - Migrations live in `prisma/migrations/` (apply on a new machine with `DATABASE_URL` set, e.g. from `.env.example`).
 - Seed (demo user + one friend): `npm run db:seed` (requires `DATABASE_URL` in `.env.local`).
 - Production: use Postgres (Neon / Supabase / Vercel Postgres), change `provider` + `url` in the datasource, and run `prisma migrate deploy` in your release pipeline; SQLite is not suitable for serverless runtime data.
+
+## Auth (Phase 1 stub)
+
+Friends are scoped to a **default user**: the oldest `User` row, or a new empty user on first use. Replace with real auth when you add it.
