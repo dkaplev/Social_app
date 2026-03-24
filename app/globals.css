@@ -24,3 +24,48 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Friends crystal dashboard — heat glow motion (respect reduced motion) */
+@keyframes crystal-pulse-slow {
+  0%,
+  100% {
+    opacity: 0.16;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes crystal-pulse-mid {
+  0%,
+  100% {
+    opacity: 0.18;
+  }
+  50% {
+    opacity: 0.36;
+  }
+}
+
+@keyframes crystal-core {
+  0%,
+  100% {
+    opacity: 0.26;
+  }
+  50% {
+    opacity: 0.44;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-crystal-pulse-slow {
+    animation: crystal-pulse-slow 2.4s ease-in-out infinite;
+  }
+
+  .animate-crystal-pulse-mid {
+    animation: crystal-pulse-mid 3.5s ease-in-out infinite;
+  }
+
+  .animate-crystal-core {
+    animation: crystal-core 6s ease-in-out infinite;
+  }
+}

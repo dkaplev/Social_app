@@ -1,15 +1,11 @@
 import Link from "next/link";
 import type { FriendTemperature } from "@prisma/client";
+import { FriendsCrystal } from "@/components/crystal/friends-crystal";
 import { prisma } from "@/lib/db/prisma";
-import { cadenceLabel } from "@/lib/friends/cadence";
 import {
   computeFriendTemperature,
   temperatureSortKey,
 } from "@/lib/friends/temperature";
-import {
-  temperatureLabel,
-  temperatureStyles,
-} from "@/lib/friends/temperature-display";
 import { getDefaultUserId } from "@/lib/user/default-user";
 
 export const dynamic = "force-dynamic";
@@ -53,8 +49,9 @@ export default async function DashboardPage() {
           Dashboard
         </h1>
         <p className="mt-2 max-w-xl text-sm text-zinc-600 dark:text-zinc-400">
-          Temperature is computed from last time you met and your cadence — coldest
-          friends surface first.
+          Your crystal maps who needs warmth: distance and glow follow cadence and
+          last meet. Tap a friend for their page (plan from there), or use list
+          view in the crystal footer.
         </p>
       </div>
 
@@ -104,54 +101,39 @@ export default async function DashboardPage() {
             </div>
           </section>
 
-          <section aria-label="Friends by priority">
-            <div className="flex items-end justify-between gap-4">
-              <h2 className="text-lg font-semibold text-foreground">Friends</h2>
-              <Link
-                href="/friends"
-                className="text-sm font-medium text-zinc-600 hover:text-foreground dark:text-zinc-400"
-              >
-                All friends
-              </Link>
-            </div>
-            <ul className="mt-4 flex flex-col gap-3">
-              {enriched.map(({ friend: f, temperature }) => (
-                <li
-                  key={f.id}
-                  className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-950/40 sm:flex-row sm:items-center sm:justify-between"
+          <section aria-label="Friends crystal">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <h2 className="text-lg font-semibold text-foreground">
+                Your crystal
+              </h2>
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  href="/graph"
+                  className="text-sm font-medium text-zinc-600 hover:text-foreground dark:text-zinc-400"
                 >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Link
-                        href={`/friends/${f.id}`}
-                        className="font-medium text-foreground hover:underline"
-                      >
-                        {f.name}
-                      </Link>
-                      <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${temperatureStyles(temperature)}`}
-                      >
-                        {temperatureLabel(temperature)}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-500">
-                      {cadenceLabel(f.cadenceDays)} · {f.cadenceDays}d cadence
-                      {f.lastMetAt
-                        ? ` · last met ${f.lastMetAt.toLocaleDateString(undefined, {
-                            dateStyle: "medium",
-                          })}`
-                        : " · last met not set"}
-                    </p>
-                  </div>
-                  <Link
-                    href={`/friends/${f.id}/plan`}
-                    className="inline-flex shrink-0 items-center justify-center rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90"
-                  >
-                    Plan this week
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                  Graph view
+                </Link>
+                <Link
+                  href="/friends"
+                  className="text-sm font-medium text-zinc-600 hover:text-foreground dark:text-zinc-400"
+                >
+                  All friends
+                </Link>
+              </div>
+            </div>
+            <p className="mt-2 max-w-2xl text-xs text-zinc-500 dark:text-zinc-500">
+              Closer orbits and stronger glow ≈ warmer ties; pulsing hints at who
+              may need a reach-out. Share-worthy snapshot export is on the roadmap.
+            </p>
+            <div className="mt-6">
+              <FriendsCrystal
+                friends={enriched.map(({ friend: f, temperature }) => ({
+                  id: f.id,
+                  name: f.name,
+                  temperature,
+                }))}
+              />
+            </div>
           </section>
         </>
       )}
