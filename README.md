@@ -22,3 +22,18 @@ Repository: [github.com/dkaplev/Social_app](https://github.com/dkaplev/Social_ap
 ## Auth (Phase 1 stub)
 
 Friends are scoped to a **default user**: the oldest `User` row, or a new empty user on first use. Replace with real auth when you add it.
+
+## Phase 1 MVP (implemented)
+
+- **Dashboard** (`/`) — temperature counts, coldest-first friends, **Plan this week**.
+- **Friends** — CRUD list, detail with prefs, invites, upcoming hang, reschedule, recent feedback.
+- **Plan** (`/friends/[id]/plan`) — rule-based 3 suggestions, micro-question for weekday evenings when confidence is low, **Create invite** (+ optional ritual flag).
+- **Share** (`/friends/[id]/invites/[inviteId]`) — public URL, copy link, message templates (friendly / short / direct).
+- **Public vote** (`/i/[token]`) — pick a slot, optional counter-note, 14-day expiry, **.ics** download after accept.
+- **Events** (`/events/[id]`) — details, in-app **.ics**, post-meetup **feedback** (updates pair weights).
+- **Graph** (`/graph`) — circular layout, color by temperature, click → friend.
+- **How to use** (`/how`).
+- **Analytics** — `AnalyticsEvent` table + dev-only **`/admin/debug`** (counts by event name).
+- **Demo** — footer **Load demo data (dev)** resets and seeds 10 friends + sample invites/events/feedback.
+
+Production: point `DATABASE_URL` at Postgres, switch `provider` in `schema.prisma`, run **`npx prisma migrate deploy`** after deploy.

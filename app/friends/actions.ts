@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
+import { logAnalytics } from "@/lib/analytics";
 import { cadenceDaysFromKey } from "@/lib/friends/cadence";
+import { DEFAULT_PAIR_WEIGHTS } from "@/lib/planning/pair-weights";
 import { getDefaultUserId } from "@/lib/user/default-user";
 
 export type CreateFriendState = { error?: string } | null;
@@ -35,7 +37,7 @@ export async function createFriend(
 
   const userId = await getDefaultUserId();
 
-  await prisma.friend.create({
+  const created = await prisma.friend.create({
     data: {
       userId,
       name,
@@ -44,9 +46,14 @@ export async function createFriend(
       prefs: {
         create: {},
       },
+      pairModel: {
+        create: { weights: DEFAULT_PAIR_WEIGHTS },
+      },
     },
   });
 
+  await logAnalytics("friend_created", { friendId: created.id });
   revalidatePath("/friends");
+  revalidatePath("/");
   redirect("/friends");
 }

@@ -4,6 +4,8 @@ const nav = [
   { href: "/", label: "Dashboard" },
   { href: "/friends", label: "Friends" },
   { href: "/friends/new", label: "Add friend" },
+  { href: "/graph", label: "Map" },
+  { href: "/how", label: "How to use" },
 ] as const;
 
 export function AppHeader() {

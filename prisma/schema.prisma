@@ -36,27 +36,34 @@ enum FriendTemperature {
 }
 
 model FriendPrefs {
-  id               String @id @default(cuid())
-  friendId         String @unique
-  friend           Friend @relation(fields: [friendId], references: [id], onDelete: Cascade)
-  vibeQuietLively  Int    @default(50)
-  maxTravelMinutes Int    @default(30)
-  budgetBand       String @default("mid")
-  durationBand     String @default("90m")
-  categories       Json   @default("[]")
-  avoidTags        Json   @default("[]")
+  id                  String  @id @default(cuid())
+  friendId            String  @unique
+  friend              Friend  @relation(fields: [friendId], references: [id], onDelete: Cascade)
+  vibeQuietLively     Int     @default(50)
+  maxTravelMinutes    Int     @default(30)
+  budgetBand          String  @default("mid")
+  durationBand        String  @default("90m")
+  categories          Json    @default("[]")
+  avoidTags           Json    @default("[]")
+  /// Micro-question (Day 14): null = unanswered; false = avoid weekday evenings in slots
+  weekdayEveningsOk   Boolean?
 }
 
 model Invite {
-  id            String       @id @default(cuid())
-  friendId      String
-  friend        Friend       @relation(fields: [friendId], references: [id], onDelete: Cascade)
-  token         String       @unique
-  status        InviteStatus @default(PENDING)
-  proposedSlots Json
-  chosenSlot    Json?
-  createdAt     DateTime     @default(now())
-  event         Event?
+  id               String       @id @default(cuid())
+  friendId         String
+  friend           Friend       @relation(fields: [friendId], references: [id], onDelete: Cascade)
+  token            String       @unique
+  status           InviteStatus @default(PENDING)
+  proposedSlots    Json
+  chosenSlot       Json?
+  createdAt        DateTime     @default(now())
+  expiresAt        DateTime?
+  durationMinutes  Int          @default(90)
+  templateId       String?
+  recurringWanted  Boolean      @default(false)
+  counterNote      String?
+  event            Event?
 }
 
 enum InviteStatus {
@@ -74,7 +81,15 @@ model Event {
   title        String
   locationText String
   status       String     @default("confirmed")
+  templateId   String?
   feedbacks    Feedback[]
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  name      String
+  meta      Json?
+  createdAt DateTime @default(now())
 }
 
 model Feedback {
