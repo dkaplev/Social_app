@@ -8,16 +8,16 @@ Deployments run from GitHub; you only need the Vercel dashboard.
 
 1. **Root Directory** is **not** under *Settings → General*. Use **[Settings → Build and Deployment](https://vercel.com/docs/deployments/configure-a-build)** (same area as Framework / Build Command). Leave **Root Directory** empty so it uses the repo root (where this `package.json` is).
 2. This repo includes **`vercel.json`**, which sets the framework to **Next.js** and pins install/build to `npm install` and `npm run build`, so detection does not depend on dashboard presets.
-3. When you add a database, set **`DATABASE_URL`** under *Settings → Environment Variables* and redeploy.
+3. Set **`DATABASE_URL`** to your **PostgreSQL** connection string under *Settings → Environment Variables* (Production + Preview as needed) and redeploy. The build runs **`prisma migrate deploy`** so tables are created automatically.
 
 Repository: [github.com/dkaplev/Social_app](https://github.com/dkaplev/Social_app).
 
-## Database (Prisma + SQLite)
+## Database (Prisma + PostgreSQL)
 
 - Schema: `prisma/schema.prisma`. Client singleton: `lib/db/prisma.ts`.
-- Migrations live in `prisma/migrations/` (apply on a new machine with `DATABASE_URL` set, e.g. from `.env.example`).
+- Migrations live in `prisma/migrations/`. **Vercel:** `npm run build` runs `prisma migrate deploy` (needs `DATABASE_URL` in project env). **Local:** copy `.env.example` to `.env.local`, then `npm run db:migrate` or `npx prisma migrate deploy`.
 - Seed (demo user + one friend): `npm run db:seed` (requires `DATABASE_URL` in `.env.local`).
-- Production: use Postgres (Neon / Supabase / Vercel Postgres), change `provider` + `url` in the datasource, and run `prisma migrate deploy` in your release pipeline; SQLite is not suitable for serverless runtime data.
+- SQLite is not used: serverless hosts (Vercel) cannot rely on a local `file:` database for production traffic.
 
 ## Auth (Phase 1 stub)
 
@@ -36,4 +36,4 @@ Friends are scoped to a **default user**: the oldest `User` row, or a new empty 
 - **Analytics** — `AnalyticsEvent` table + dev-only **`/admin/debug`** (counts by event name).
 - **Demo** — footer **Load demo data (dev)** resets and seeds 10 friends + sample invites/events/feedback.
 
-Production: point `DATABASE_URL` at Postgres, switch `provider` in `schema.prisma`, run **`npx prisma migrate deploy`** after deploy.
+Production: **`DATABASE_URL`** must be a reachable Postgres URL; migrations apply on each deploy via the build script.
